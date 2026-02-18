@@ -1,0 +1,38 @@
+# ─── Core Framework ───
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+gunicorn==23.0.0
+pydantic==2.10.5
+pydantic-settings==2.7.1
+python-multipart==0.0.20
+
+# ─── Authentication ───
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# ─── OCR Engines ───
+pytesseract==0.3.13
+easyocr==1.7.2
+
+# ─── Image Processing ───
+opencv-python-headless==4.10.0.84
+numpy==2.2.2
+Pillow==11.1.0
+
+# ─── PDF Processing ───
+pdf2image==1.17.0
+
+# ─── Async Task Queue ───
+celery[redis]==5.4.0
+redis==5.2.1
+
+# ─── HTTP Client (for optional LLM integration) ───
+httpx==0.28.1
+
+# ─── Logging & Monitoring ───
+structlog==24.4.0
+
+# ─── Testing ───
+pytest==8.3.4
+pytest-asyncio==0.25.3
+httpx==0.28.1

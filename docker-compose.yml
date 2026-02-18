@@ -1,0 +1,76 @@
+version: "3.9"
+
+services:
+  # ── Main API ──
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: medicord-ocr-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+    volumes:
+      - upload_data:/tmp/medicord-uploads
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "2.0"
+
+  # ── Celery Worker (async PDF / heavy tasks) ──
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: medicord-celery-worker
+    command: >
+      celery -A app.tasks.celery_app worker
+      --loglevel=info
+      --concurrency=2
+      --max-tasks-per-child=50
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+    volumes:
+      - upload_data:/tmp/medicord-uploads
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "2.0"
+
+  # ── Redis ──
+  redis:
+    image: redis:7-alpine
+    container_name: medicord-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  upload_data:
+  redis_data:

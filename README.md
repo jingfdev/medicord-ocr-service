@@ -91,7 +91,7 @@ cp .env.example .env
 # Edit .env with your settings
 
 # Run the API
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8080
 ```
 
 ### 3. Docker (Recommended)

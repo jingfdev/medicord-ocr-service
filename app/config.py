@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str = "change-me-to-a-secure-random-string-min-32-chars"
     JWT_ALGORITHM: str = "HS256"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    CLIENT_ID: str = "medicord-flutter-app"
+    CLIENT_SECRET: str = "change-me-to-a-secure-secret"
 
     # ── Redis ──
     REDIS_URL: str = "redis://localhost:6379/0"

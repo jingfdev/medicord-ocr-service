@@ -15,12 +15,6 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Authentication"])
 
-# For production, use a proper user store / OAuth2 provider.
-# This demo endpoint validates a shared client_id/secret pair.
-_DEMO_CLIENTS = {
-    "medicord-flutter-app": "change-me-to-a-secure-secret",
-}
-
 
 @router.post(
     "/auth/token",
@@ -30,15 +24,14 @@ _DEMO_CLIENTS = {
 )
 async def create_token(body: TokenRequest):
     """Issue a JWT token for a valid client."""
-    expected_secret = _DEMO_CLIENTS.get(body.client_id)
+    settings = get_settings()
 
-    if not expected_secret or expected_secret != body.client_secret:
+    if body.client_id != settings.CLIENT_ID or body.client_secret != settings.CLIENT_SECRET:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid client credentials",
         )
 
-    settings = get_settings()
     expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
 
     token = create_access_token(
